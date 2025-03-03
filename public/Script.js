@@ -57,19 +57,37 @@ const makeAllPlay=()=>{
     })
 }
 Array.from(document.getElementsByClassName("songItemPlay")).forEach((element)=>{
-    element.addEventListener('click',e=>{
-        makeAllPlay();
+    element.addEventListener('click',(e)=>{
         index=parseInt(e.target.id)
-        e.target.classList.remove('bi-play')
-        e.target.classList.add('bi-pause')
-        audioElement.src=`./../assets/songs/${index}.mp3`
-        songIndex=index-1
-        masterSongName.innerText=songs[index-1].songName
-        audioElement.currentTime=0; 
-        audioElement.play();
-        gif.style.opacity=1;
-        masterPlay.classList.remove('bi-play')
-        masterPlay.classList.add('bi-pause')
+        if (e.target.classList.contains('bi-pause')) {
+            // If it is playing, pause it
+            e.target.classList.remove('bi-pause');
+            e.target.classList.add('bi-play');
+            
+            audioElement.pause(); // Pause the audio
+            gif.style.opacity = 0; // Hide the gif when paused
+            masterPlay.classList.remove('bi-pause');
+            masterPlay.classList.add('bi-play');
+        } else {
+            // If it's not playing, first stop all other songs
+            makeAllPlay();
+            
+            // Play the clicked song
+            e.target.classList.remove('bi-play');
+            e.target.classList.add('bi-pause');
+            
+            audioElement.src = `./../assets/songs/${index}.mp3`;
+            songIndex = index - 1; // Update the songIndex
+            
+            masterSongName.innerText = songs[songIndex].songName;
+            audioElement.currentTime = 0;
+            audioElement.play(); // Start playing the song
+            
+            // Update UI for play state
+            gif.style.opacity = 1;
+            masterPlay.classList.remove('bi-play');
+            masterPlay.classList.add('bi-pause');
+        }
         time.innerText=parseInt((myProgressBar.value*audioElement.duration)/100) 
     })
 })
